@@ -1,8 +1,21 @@
 {
   "name": "@shgysk8zer0/aegis-component",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Base component using `@shgysk8zer0/aegis` & `@shgysk8zer0/aegis-styles`",
-  "keywords": [],
+  "keywords": [
+    "aegis",
+    "dom",
+    "html",
+    "css",
+    "theming",
+    "secure",
+    "sanitizer-api",
+    "html-templates",
+    "constructable-stylesheets",
+    "custom-elements",
+    "web-components",
+    "component-library"
+  ],
   "type": "module",
   "main": "./copmonent.cjs",
   "module": "./component.js",

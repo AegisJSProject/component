@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.0.2] - 2024-02-04
+
+### Fixed
+- Fix typos in README
+- Add `keywords` in `package.json`
+
 ## [v0.0.1] - 2024-02-04
 
 Initial Release
