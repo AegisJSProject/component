@@ -1,6 +1,6 @@
 {
   "name": "@shgysk8zer0/aegis-component",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Base component using `@shgysk8zer0/aegis` & `@shgysk8zer0/aegis-styles`",
   "keywords": [
     "aegis",
@@ -87,7 +87,7 @@
     "rollup": "^4.9.6"
   },
   "dependencies": {
-    "@shgysk8zer0/aegis": "^0.0.4",
-    "@shgysk8zer0/aegis-styles": "^0.0.2"
+    "@shgysk8zer0/aegis": "^0.0.5",
+    "@shgysk8zer0/aegis-styles": "^0.0.3"
   }
 }
