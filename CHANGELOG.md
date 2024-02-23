@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v0.0.4] - 2024-02-20
 
 ### Added
+- Add base component class for custom inputs
+
+### Changed
+- General standardizing of things
 
 
 ## [v0.0.3] - 2024-02-07
