@@ -6,11 +6,10 @@ import { styles } from './dad-joke-styles.js';
 import { template } from './dad-joke-html.js';
 
 class HTMLDataJokeElement extends AegisComponent {
-	async [SYMBOLS.render](type, { shadow, ...data }) {
+	async [SYMBOLS.render](type, { shadow, signal, ...data }) {
 		switch(type) {
 			case TRIGGERS.constructed:
 				addStyles(shadow, styles);
-
 				appendTo(shadow, template.cloneNode(true));
 
 				// Cannot add listeners or `on*` attributes using `html`
@@ -21,11 +20,8 @@ class HTMLDataJokeElement extends AegisComponent {
 				break;
 
 			case TRIGGERS.connected:
-				replace(this, html`<p slot="joke">${await HTMLDataJokeElement.getJoke()}</p>`);
-				break;
-
 			case 'click':
-				replace(this, html`<p slot="joke">${await HTMLDataJokeElement.getJoke()}</p>`);
+				replace(this, html`<p slot="joke">${await HTMLDataJokeElement.getJoke({ signal })}</p>`);
 				break;
 
 			case TRIGGERS.colorSchemeChanged:

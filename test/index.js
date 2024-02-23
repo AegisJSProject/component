@@ -3,6 +3,7 @@ import { reset } from '@shgysk8zer0/aegis-styles/reset.js';
 import { baseTheme, lightTheme, darkTheme } from '@shgysk8zer0/aegis-styles/theme.js';
 import './components/dad-joke.js';
 import './components/input-test.js';
+import './components/aegis-log.js';
 
 createPolicy('default', {
 	createHTML: input => {
@@ -19,9 +20,10 @@ replaceStyles(document, reset, baseTheme, lightTheme, darkTheme, css`.${scope} {
 	color: red;
 }`);
 
-const [DadJoke, InputTest] = await Promise.all([
+const [DadJoke, InputTest, AegisLog] = await Promise.all([
 	customElements.whenDefined('dad-joke'),
 	customElements.whenDefined('input-test'),
+	customElements.whenDefined('aegis-log'),
 ]);
 
 const id = crypto.randomUUID();
@@ -31,6 +33,7 @@ document.body.append(
 		<h1 class="${scope}">Hello, World!</h1>
 	</header>`,
 	new DadJoke(),
+	new AegisLog(),
 	new DadJoke(),
 	html`<form id="testForm">
 		<fieldset>

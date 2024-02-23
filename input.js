@@ -12,7 +12,7 @@ const getShadow = target => protectedData.get(target).shadow;
  * @see https://web.dev/articles/more-capable-form-controls
  */
 export class AegisInput extends AegisComponent {
-	#value = '';
+	#value;
 
 	async [SYMBOLS.initialize]({
 		role = 'textbox',
@@ -23,12 +23,16 @@ export class AegisInput extends AegisComponent {
 		shadow,
 		internals,
 	} = {}) {
-		console.log(this);
-
-		if (! this[SYMBOLS.initialized]) {
-			protectedData.set(this, await super[SYMBOLS.initialize]({
+		if (! (this[SYMBOLS.setValue] instanceof Function)) {
+			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.setValue.toString()}] method.`);
+		} else if (! this[SYMBOLS.initialized]) {
+			const { shadow: s, internals: i } = await super[SYMBOLS.initialize]({
 				role, mode, clonable, delegatesFocus, slotAssignment, shadow, internals,
-			}));
+			});
+
+			protectedData.set(this, { shadow: s, internals: i });
+
+			return { shadow: s, internals: i };
 		}
 	}
 

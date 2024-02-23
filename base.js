@@ -28,11 +28,17 @@ export class AegisComponent extends HTMLElement {
 	#internals;
 	#initialized = false;
 
-	constructor({ initialize = true } = {}) {
+	constructor({
+		role = 'document',
+		mode = 'closed',
+		clonable = false,
+		delegatesFocus = false,
+		slotAssignment = 'named',
+	} = {}) {
 		super();
 
-		if (initialize) {
-			this[SYMBOLS.initialize]();
+		if (typeof mode === 'string') {
+			this[SYMBOLS.initialize]({ mode, role, clonable, delegatesFocus, slotAssignment });
 		}
 	}
 
@@ -48,7 +54,9 @@ export class AegisComponent extends HTMLElement {
 	} = {}) {
 		if (this.#initialized) {
 			throw new DOMException('Already initialized.');
-		} else if (this[SYMBOLS.render] instanceof Function) {
+		} else if (! (this[SYMBOLS.render] instanceof Function)) {
+			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`);
+		} else {
 			if (shadow instanceof ShadowRoot) {
 				this.#shadow = shadow;
 			} else {
@@ -100,8 +108,6 @@ export class AegisComponent extends HTMLElement {
 			this.triggerUpdate(TRIGGERS.constructed);
 
 			return { internals: this.#internals, shadow: this.#shadow };
-		} else {
-			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`);
 		}
 	}
 
@@ -152,31 +158,52 @@ export class AegisComponent extends HTMLElement {
 		}
 
 		if (this.isConnected && oldValue !== newValue) {
-			await this.triggerUpdate(TRIGGERS.attributeChanged,{ name, oldValue, newValue });
+			await this.triggerUpdate(TRIGGERS.attributeChanged, { name, oldValue, newValue });
 		}
 	}
 
-	async triggerUpdate(type = TRIGGERS.unknown, data = {}) {
+	async triggerUpdate(type = TRIGGERS.unknown, data = {}, { signal } = {}) {
 		await new Promise((resolve, reject) => {
-			requestAnimationFrame(async timestamp => {
-				this.#internals.ariaBusy = 'true';
+			if (signal instanceof AbortSignal && signal.aborted) {
+				reject(signal.reason);
+			} else {
+				const controller = new AbortController();
 
-				try {
-					const result = await this[SYMBOLS.render](type, {
-						...data,
-						shadow: this.#shadow,
-						internals: this.#internals,
-						styleSheets: this.#shadow.adoptedStyleSheets,
-						timestamp,
+				const af = requestAnimationFrame(async timestamp => {
+					this.#internals.ariaBusy = 'true';
+
+					try {
+						const result = await this[SYMBOLS.render](type, {
+							...data,
+							state: history.state ?? {},
+							url: new URL(location.href),
+							shadow: this.#shadow,
+							internals: this.#internals,
+							styleSheets: this.#shadow.adoptedStyleSheets,
+							signal,
+							timestamp,
+						});
+
+						resolve(result);
+					} catch(err) {
+						reject(err);
+					} finally {
+						this.#internals.ariaBusy = 'false';
+						controller.abort();
+					}
+				});
+
+				if (signal instanceof AbortSignal) {
+					signal.addEventListener('abort', ({ target })  => {
+						reject(target.reason);
+						cancelAnimationFrame(af);
+						controller.abort(target.reason);
+					}, {
+						once: true,
+						signal: controller.signal,
 					});
-
-					resolve(result);
-				} catch(err) {
-					reject(err);
-				} finally {
-					this.#internals.ariaBusy = 'false';
 				}
-			});
+			}
 		});
 	}
 
