@@ -29,4 +29,4 @@ export const styles = css`:host {
 	padding: 1.3rem;
 	border-radius: 8px;
 	border: 1px solid #cacaca;
-}`
+}`;
