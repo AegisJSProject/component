@@ -32,20 +32,24 @@ Base component using [`@shgysk8zer0/aegis`](https://github.com/shgysk8zer0/aegis
 ## Example Component
 
 ```js
-import { AegisComponent, registerComponent } from '@shgysk8zer0/aegis-component';
+import { AegisComponent, TRIGGERS, SYMBOLS } from '@shgysk8zer0/aegis-component';
 import { html, css, appendTo, addStyles } from '@shgysk8zer0/aegis';
 
-registerComponent('hello-world', HTMLHelloWorldElement extends AegisComponent {
-  constructor() {
-    super(({ shadow }) => {
-      addStyles(shadow, css`
-        .foo {
-          color: red;
-        }
-      `);
+export class HTMLHelloWorldElement extends AegisComponent {
+  [SYMBOLS.render](type, { shadow }) {
+    switch(type) {
+      case TRIGGERS.constructed:
+        appendTo(shadow, html`<h1 class="foo">Hello, World!</h1>`);
 
-      appendTo(shadow, html`<h1 class="foo">Hello, World!</h1>`);
-    });
+        addStyles(shadow, css`
+          .foo {
+            color: red;
+          }
+        `);
+       break;
+    }
   }
-});
+}
+
+HTMLHelloWorldElement.register('hello-world');
 ```

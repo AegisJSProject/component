@@ -17,7 +17,7 @@
     "component-library"
   ],
   "type": "module",
-  "main": "./copmonent.cjs",
+  "main": "./component.cjs",
   "module": "./component.js",
   "unpkg": "./component.js",
   "exports": {
@@ -46,8 +46,16 @@
     "node": ">=18.0.0"
   },
   "private": false,
+  "config": {
+    "serve": {
+      "domain": "localhost",
+      "path": "./",
+      "port": 8080
+    }
+  },
   "scripts": {
     "test": "npm run lint:js && npm run build",
+    "start": "http-server ${npm_package_config_serve_path} -c-1 --port ${npm_package_config_serve_port} --gzip true --brotli true -a ${npm_package_config_serve_domain} -o /test/",
     "preversion": "npm test",
     "prepare": "npm run build",
     "lint:js": "eslint .",
@@ -84,10 +92,11 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
     "eslint": "^8.56.0",
+    "http-server": "^14.1.1",
     "rollup": "^4.9.6"
   },
   "dependencies": {
-    "@shgysk8zer0/aegis": "^0.0.6",
+    "@shgysk8zer0/aegis": "^0.0.7",
     "@shgysk8zer0/aegis-styles": "^0.0.3"
   }
 }
