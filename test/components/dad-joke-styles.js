@@ -1,5 +1,5 @@
-import { css } from '@shgysk8zer0/aegis';
-import { gray } from '@shgysk8zer0/aegis-styles/palette/bootstrap.js';
+import { css } from '@aegisjsproject/core';
+import { gray } from '@aegisjsproject/styles/palette/bootstrap.js';
 
 export const styles = css`:host {
 	padding: 1.2rem;

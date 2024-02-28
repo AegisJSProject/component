@@ -1,6 +1,6 @@
-import { html, replace, addStyles, appendTo } from '@shgysk8zer0/aegis';
-import { AegisComponent } from '@shgysk8zer0/aegis-component/component.js';
-import { TRIGGERS, SYMBOLS } from '@shgysk8zer0/aegis-component/consts.js';
+import { html, replace, addStyles, appendTo } from '@aegisjsproject/core';
+import { AegisComponent } from '@aegisjsproject/component/component.js';
+import { TRIGGERS, SYMBOLS } from '@aegisjsproject/component/consts.js';
 import { updateIcon } from '../icons.js';
 import { styles } from './dad-joke-styles.js';
 import { template } from './dad-joke-html.js';

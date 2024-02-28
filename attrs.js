@@ -1,9 +1,9 @@
 /**
  * @copyright 2023-2024 Chris Zuber <admin@kernvalley.us>
  */
-import { setAttr, isScriptURL, isTrustedType } from '@shgysk8zer0/aegis/trust.js';
+import { setAttr, isScriptURL, isTrustedType } from '@aegisjsproject/core/trust.js';
 
-const clamp = Math.clamp instanceof Function ? Math.clam : (min, val, max) => Math.min(max, Math.max(min, val));
+const clamp = Math.clamp instanceof Function ? Math.clamp : (min, val, max) => Math.min(max, Math.max(min, val));
 const between = (min, val, max) => typeof val === 'number' && val >= min && val <= max;
 
 export function getBool(el, attr) {

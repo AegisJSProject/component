@@ -6,13 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.0] - 2024-02-27
+
+### Added
+- Add custom error classes for `AegisInput` components, for `internals.setValidity()`
+- Add custom state constants
+
+### Changed
+- Renamed to `@aegisjsproject/component`
+
 ## [v0.0.4] - 2024-02-23
 
 ### Added
 - Add base component class for custom inputs
+- Add more ARIA automated handling
 
 ### Changed
+- Renamed to `@aegisjsproject/component`
 - General standardizing of things
+- Major updates to `AegisInput` class
+- Misc updates to as required throughout
+
+### Fixed
+- Fix `clamp` mapping to `Math.clamp` where available
 
 
 ## [v0.0.3] - 2024-02-07

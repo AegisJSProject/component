@@ -1,7 +1,7 @@
-import { reset } from '@shgysk8zer0/aegis-styles/reset.js';
-import { componentBase, componentDarkTheme, componentLightTheme } from '@shgysk8zer0/aegis-styles/theme.js';
-import { btn } from '@shgysk8zer0/aegis-styles/button.js';
-import { SYMBOLS, TRIGGERS, EVENTS } from './consts.js';
+import { reset } from '@aegisjsproject/styles/reset.js';
+import { componentBase, componentDarkTheme, componentLightTheme } from '@aegisjsproject/styles/theme.js';
+import { btn } from '@aegisjsproject/styles/button.js';
+import { SYMBOLS, TRIGGERS, EVENTS, STATES } from './consts.js';
 
 const observed = new WeakMap();
 
@@ -26,7 +26,8 @@ async function whenIntersecting(el) {
 export class AegisComponent extends HTMLElement {
 	#shadow;
 	#internals;
-	#initialized = false;
+	#initialized;
+	#initPromise;
 
 	constructor({
 		role = 'document',
@@ -36,6 +37,8 @@ export class AegisComponent extends HTMLElement {
 		slotAssignment = 'named',
 	} = {}) {
 		super();
+		this.#initialized = false;
+		this.#initPromise = Promise.withResolvers();
 
 		if (typeof mode === 'string') {
 			this[SYMBOLS.initialize]({ mode, role, clonable, delegatesFocus, slotAssignment });
@@ -57,62 +60,79 @@ export class AegisComponent extends HTMLElement {
 		} else if (! (this[SYMBOLS.render] instanceof Function)) {
 			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`);
 		} else {
-			if (shadow instanceof ShadowRoot) {
-				this.#shadow = shadow;
-			} else {
-				this.#shadow = this.attachShadow({ mode, clonable, delegatesFocus, slotAssignment });
-			}
+			try {
+				if (shadow instanceof ShadowRoot) {
+					this.#shadow = shadow;
+				} else {
+					this.#shadow = this.attachShadow({ mode, clonable, delegatesFocus, slotAssignment });
+				}
 
-			if (internals instanceof ElementInternals) {
-				this.#internals = internals;
-			} else {
-				this.#internals = this.attachInternals();
-			}
+				if (internals instanceof ElementInternals) {
+					this.#internals = internals;
+				} else {
+					this.#internals = this.attachInternals();
+				}
 
-			this.#internals.role = role;
+				this.#internals.role = role;
+				this.#internals.states.add(STATES.loading);
 
-			if (callback instanceof Function) {
-				callback.call(this, {
-					internals: this.#internals,
-					shadow: this.#shadow,
-					target: this,
+				if (callback instanceof Function) {
+					callback.call(this, {
+						internals: this.#internals,
+						shadow: this.#shadow,
+						target: this,
+					});
+				}
+
+				this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme];
+
+				this.#shadow.addEventListener('slotchange', event => {
+					event.stopPropagation();
+					event.stopImmediatePropagation();
+
+					if (event.isTrusted) {
+						this.triggerUpdate(TRIGGERS.slotChanged, {
+							target: event.target,
+							name: event.target.name,
+							assigned: event.target.assignedNodes(),
+						});
+					}
 				});
+
+				matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ({ target, isTrusted }) => {
+					if (isTrusted) {
+						this.triggerUpdate(TRIGGERS.colorSchemeChanged, {
+							mediaQuery: target,
+							matches: target.matches,
+							media: target.media,
+						});
+					}
+				});
+
+				this.#initialized = true;
+
+				this.triggerUpdate(TRIGGERS.constructed);
+				this.#internals.states.add(STATES.initialized);
+				this.#internals.states.delete(STATES.loading);
+
+				this.#initPromise.resolve();
+				return { internals: this.#internals, shadow: this.#shadow };
+			} catch (err) {
+				this.#initPromise.reject(err);
 			}
-
-			this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme];
-
-			this.#shadow.addEventListener('slotchange', event => {
-				event.stopPropagation();
-				event.stopImmediatePropagation();
-
-				if (event.isTrusted) {
-					this.triggerUpdate(TRIGGERS.slotChanged, {
-						target: event.target,
-						name: event.target.name,
-						assigned: event.target.assignedNodes(),
-					});
-				}
-			});
-
-			matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ({ target, isTrusted }) => {
-				if (isTrusted) {
-					this.triggerUpdate(TRIGGERS.colorSchemeChanged, {
-						mediaQuery: target,
-						matches: target.matches,
-						media: target.media,
-					});
-				}
-			});
-
-			this.#initialized = true;
-			this.triggerUpdate(TRIGGERS.constructed);
-
-			return { internals: this.#internals, shadow: this.#shadow };
 		}
+	}
+
+	[SYMBOLS.hasState](state) {
+		return this.#internals instanceof ElementInternals && this.#internals.states.has(state);
 	}
 
 	get [Symbol.toStringTag]() {
 		return 'AegisComponent';
+	}
+
+	get [SYMBOLS.getStates]() {
+		return Array.from(this.#internals.states.values());
 	}
 
 	get [SYMBOLS.initialized]() {
@@ -215,6 +235,10 @@ export class AegisComponent extends HTMLElement {
 				this.addEventListener(EVENTS.connected, () => resolve(), { once: true });
 			}
 		});
+	}
+
+	get whenInitialized() {
+		return this.#initPromise.promise;
 	}
 
 	get loading() {

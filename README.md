@@ -1,25 +1,25 @@
-# `@shgysk8zer0/aegis-component`
+# `@aegisjsproject/component`
 
-Base component using [`@shgysk8zer0/aegis`](https://github.com/shgysk8zer0/aegis)
-& [`@shgysk8zer0/aegis-styles`](https://github.com/shgysk8zer0/aegis-styles).
+Base component using [`@aegisjsproject/core`](https://github.com/AegisJSProject/core)
+& [`@aegisjsproject/styles`](https://github.com/AegisJSProject/styles).
 
-[![CodeQL](https://github.com/shgysk8zer0/aegis-component/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/shgysk8zer0/aegis-component/actions/workflows/codeql-analysis.yml)
-![Node CI](https://github.com/shgysk8zer0/aegis-component/workflows/Node%20CI/badge.svg)
-![Lint Code Base](https://github.com/shgysk8zer0/aegis-component/workflows/Lint%20Code%20Base/badge.svg)
+[![CodeQL](https://github.com/AegisJSProject/componentt/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/AegisJSProject/componentt/actions/workflows/codeql-analysis.yml)
+![Node CI](https://github.com/AegisJSProject/componentt/workflows/Node%20CI/badge.svg)
+![Lint Code Base](https://github.com/AegisJSProject/componentt/workflows/Lint%20Code%20Base/badge.svg)
 
-[![GitHub license](https://img.shields.io/github/license/shgysk8zer0/aegis-component.svg)](https://github.com/shgysk8zer0/aegis-component/blob/master/LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/shgysk8zer0/aegis-component.svg)](https://github.com/shgysk8zer0/aegis-component/commits/master)
-[![GitHub release](https://img.shields.io/github/release/shgysk8zer0/aegis-component?logo=github)](https://github.com/shgysk8zer0/aegis-component/releases)
+[![GitHub license](https://img.shields.io/github/license/AegisJSProject/componentt.svg)](https://github.com/AegisJSProject/componentt/blob/master/LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/AegisJSProject/componentt.svg)](https://github.com/AegisJSProject/componentt/commits/master)
+[![GitHub release](https://img.shields.io/github/release/AegisJSProject/componentt?logo=github)](https://github.com/AegisJSProject/componentt/releases)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/shgysk8zer0?logo=github)](https://github.com/sponsors/shgysk8zer0)
 
-[![npm](https://img.shields.io/npm/v/@shgysk8zer0/aegis-component)](https://www.npmjs.com/package/@shgysk8zer0/aegis-component)
-![node-current](https://img.shields.io/node/v/@shgysk8zer0/aegis-component)
-![npm bundle size gzipped](https://img.shields.io/bundlephobia/minzip/@shgysk8zer0/aegis-component)
-[![npm](https://img.shields.io/npm/dw/@shgysk8zer0/aegis-component?logo=npm)](https://www.npmjs.com/package/@shgysk8zer0/aegis-component)
+[![npm](https://img.shields.io/npm/v/@aegisjsproject/component)](https://www.npmjs.com/package/@aegisjsproject/component)
+![node-current](https://img.shields.io/node/v/@aegisjsproject/component)
+![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40aegisjsproject%2Fcomponent)
+[![npm](https://img.shields.io/npm/dw/@aegisjsproject/component?logo=npm)](https://www.npmjs.com/package/@aegisjsproject/component)
 
-[![GitHub followers](https://img.shields.io/github/followers/shgysk8zer0.svg?style=social)](https://github.com/shgysk8zer0)
-![GitHub forks](https://img.shields.io/github/forks/shgysk8zer0/aegis-component.svg?style=social)
-![GitHub stars](https://img.shields.io/github/stars/shgysk8zer0/aegis-component.svg?style=social)
+[![GitHub followers](https://img.shields.io/github/followers/AegisJSProject.svg?style=social)](https://github.com/AegisJSProject)
+![GitHub forks](https://img.shields.io/github/forks/AegisJSProject/componentt.svg?style=social)
+![GitHub stars](https://img.shields.io/github/stars/AegisJSProject/componentt.svg?style=social)
 [![Twitter Follow](https://img.shields.io/twitter/follow/shgysk8zer0.svg?style=social)](https://twitter.com/shgysk8zer0)
 
 [![Donate using Liberapay](https://img.shields.io/liberapay/receives/shgysk8zer0.svg?logo=liberapay)](https://liberapay.com/shgysk8zer0/donate "Donate using Liberapay")
@@ -32,8 +32,8 @@ Base component using [`@shgysk8zer0/aegis`](https://github.com/shgysk8zer0/aegis
 ## Example Component
 
 ```js
-import { AegisComponent, TRIGGERS, SYMBOLS } from '@shgysk8zer0/aegis-component';
-import { html, css, appendTo, addStyles } from '@shgysk8zer0/aegis';
+import { AegisComponent, TRIGGERS, SYMBOLS } from '@aegisjsproject/component';
+import { html, css, appendTo, addStyles } from '@aegisjsproject/core';
 
 export class HTMLHelloWorldElement extends AegisComponent {
   [SYMBOLS.render](type, { shadow }) {
