@@ -1,5 +1,5 @@
-import { html } from '@shgysk8zer0/aegis';
-import { AegisComponent, SYMBOLS } from '@shgysk8zer0/aegis-component';
+import { html } from '@aegisjsproject/core';
+import { AegisComponent, SYMBOLS } from '@aegisjsproject/component';
 
 class AegisLog extends AegisComponent {
 	constructor() {

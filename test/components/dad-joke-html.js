@@ -1,4 +1,4 @@
-import { html } from '@shgysk8zer0/aegis';
+import { html } from '@aegisjsproject/core';
 
 export const template = html`<div part="container">
 	<div part="joke">

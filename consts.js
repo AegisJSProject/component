@@ -3,6 +3,24 @@ export const SYMBOLS = {
 	initialize: Symbol.for('aegis:initialize'),
 	initialized: Symbol.for('aegis:initialized'),
 	setValue: Symbol.for('aegis:value:set'),
+	sanitizeValue: Symbol.for('aegis:value:sanitize'),
+	hasState: Symbol.for('aegis:states:has'),
+	getStates: Symbol.for('aegis:states:get'),
+};
+
+/**
+ * Custom States are `--` prefixed for compatibility with bad Chrome implementation
+ */
+export const STATES = {
+	initialized: '--initialized',
+	loading: '--loading',
+	ready: '--ready',
+	valid: '--valid',
+	invalid: '--invalid',
+	required: '--required',
+	disabled: '--disabled',
+	readOnly: '--readonly',
+	checked: '--checked',
 };
 
 export const TRIGGERS = {
@@ -18,11 +36,12 @@ export const TRIGGERS = {
 	formReset: 'aegis:form:reset',
 	formStateRestore: 'aegis:form:state-restore',
 	colorSchemeChanged: 'aegis:color-scheme-changed',
-	// valueChanged: Symbol.for('aegis:value:change'),
 };
 
 export const EVENTS = {
 	connected: 'aegis:connected',
 	disconnected: 'aegis:disconnected',
 	adopted: 'aegis:adopted',
+	valid: 'aegis:valid',
+	invalid: 'aegis:invalid',
 };

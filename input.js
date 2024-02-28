@@ -1,12 +1,25 @@
 import { AegisComponent } from './base.js';
-import { TRIGGERS, SYMBOLS } from './consts.js';
+import { TRIGGERS, SYMBOLS, STATES, EVENTS } from './consts.js';
 import { getBool, setBool, getString, setString } from './attrs.js';
 
 const protectedData = new WeakMap();
 
-const getInternals = target => protectedData.get(target).internals;
+const getInternals = target => protectedData.get(target);
 
-const getShadow = target => protectedData.get(target).shadow;
+const whenInit = async (target, callback) => await target.whenInitialized
+	.then(() => callback.call(target, protectedData.get(target)));
+
+import {
+	AegisInputError, ValueMissingError, TypeMismatchError, PatternMismatchError,
+	TooLongError, TooShortError, RangeUnderflowError, RangeOverflowError,
+	StepMismatchError, BadInputError,
+} from './errors.js';
+
+export const ERRORS = {
+	AegisInputError, ValueMissingError, TypeMismatchError, PatternMismatchError,
+	TooLongError, TooShortError, RangeUnderflowError, RangeOverflowError,
+	StepMismatchError, BadInputError,
+};
 
 /**
  * @see https://web.dev/articles/more-capable-form-controls
@@ -23,7 +36,7 @@ export class AegisInput extends AegisComponent {
 		shadow,
 		internals,
 	} = {}) {
-		if (! (this[SYMBOLS.setValue] instanceof Function)) {
+		if (! (this[SYMBOLS.sanitizeValue] instanceof Function)) {
 			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.setValue.toString()}] method.`);
 		} else if (! this[SYMBOLS.initialized]) {
 			const { shadow: s, internals: i } = await super[SYMBOLS.initialize]({
@@ -65,11 +78,39 @@ export class AegisInput extends AegisComponent {
 	}
 
 	set value(value) {
-		this[SYMBOLS.setValue]({
-			value,
-			internals: getInternals(this),
-			shadow: getShadow(this),
-		}).then(result => this.#value = result, console.error);
+		this.whenInitialized.then(async () => {
+			const { internals, shadow } = protectedData.get(this);
+
+			try {
+				const result  = await this[SYMBOLS.sanitizeValue]({ value, internals, shadow });
+				this.#value = result;
+				internals.setFormValue(result);
+				internals.setValidity({}, '');
+				internals.ariaInvalid = 'false';
+				internals.states.delete(STATES.invalid);
+				internals.states.add(STATES.valid);
+				this.removeattribute('aria-errormessage');
+
+				if (typeof result === 'string') {
+					internals.ariaValueNow = result;
+				}
+
+				this.dispatchEvent(new Event(EVENTS.valid));
+			} catch(error) {
+				if (! (error instanceof AegisInputError)) {
+					console.error(error);
+					internals.setValidity({ customError: true });
+				} else {
+					error.setValidityOn(internals);
+				}
+
+				internals.states.add(STATES.invalid);
+				internals.states.delete(STATES.valid);
+				internals.ariaInvalid = 'true';
+				this.setAttribute('aria-errormessage', error.message);
+				this.dispatchEvent(new Event(EVENTS.invalid));
+			}
+		});
 	}
 
 	get name() {
@@ -86,7 +127,16 @@ export class AegisInput extends AegisComponent {
 
 	set required(val) {
 		setBool(this, 'required', val);
-		getInternals(this).ariaRequired = this.required ? 'true' : 'false';
+
+		whenInit(this, ({ internals }) => {
+			if (this.required) {
+				internals.ariaRequired = 'true';
+				internals.states.add(STATES.required);
+			} else {
+				internals.ariaRequied = 'false';
+				internals.states.delete(STATES.required);
+			}
+		});
 	}
 
 	get disabled() {
@@ -95,7 +145,16 @@ export class AegisInput extends AegisComponent {
 
 	set disabled(val) {
 		setBool(this, 'disabled', val);
-		getInternals(this).ariaDisabled = this.disabled ? 'true' : 'false';
+
+		whenInit(this, ({ internals }) => {
+			if (this.disabled) {
+				internals.ariaDisabled = 'true';
+				internals.states.add(STATES.disabled);
+			} else {
+				internals.ariaDisabled = 'false';
+				internals.states.delete(STATES.disabled);
+			}
+		});
 	}
 
 	get readOnly() {
@@ -104,7 +163,16 @@ export class AegisInput extends AegisComponent {
 
 	set readOnly(val) {
 		setBool(this, 'readonly', val);
-		getInternals(this).ariaReadOnly = this.readOnly ? 'true' : 'false';
+		whenInit(this, ({ internals }) => internals.ariaReadOnly = this.readOnly ? 'true' : 'false');
+		whenInit(this, ({ internals }) => {
+			if (this.readOnly) {
+				internals.ariaReadOnly = 'true';
+				internals.states.add(STATES.readOnly);
+			} else {
+				internals.ariaReadOnly = 'false';
+				internals.states.delete(STATES.readOnly);
+			}
+		});
 	}
 
 	checkValidity() {

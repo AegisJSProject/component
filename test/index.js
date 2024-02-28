@@ -1,6 +1,6 @@
-import { html, css, replaceStyles, getUniqueSelector, createPolicy } from '@shgysk8zer0/aegis';
-import { reset } from '@shgysk8zer0/aegis-styles/reset.js';
-import { baseTheme, lightTheme, darkTheme } from '@shgysk8zer0/aegis-styles/theme.js';
+import { html, css, replaceStyles, getUniqueSelector, createPolicy } from '@aegisjsproject/core';
+import { reset } from '@aegisjsproject/styles/reset.js';
+import { baseTheme, lightTheme, darkTheme } from '@aegisjsproject/styles/theme.js';
 import './components/dad-joke.js';
 import './components/input-test.js';
 import './components/aegis-log.js';
@@ -49,6 +49,9 @@ document.body.append(
 const input = new InputTest();
 input.name = 'test';
 input.id = id;
+input.required = true;
+input.minLength = 10;
+input.maxLength = 12;
 document.querySelector('fieldset').append(input);
 document.forms.testForm.addEventListener('submit', event => {
 	event.preventDefault();
