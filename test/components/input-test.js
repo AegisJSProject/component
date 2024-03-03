@@ -5,9 +5,22 @@ import {
 } from '@aegisjsproject/component/errors.js';
 import { TRIGGERS, SYMBOLS } from '@aegisjsproject/component/consts.js';
 import { getInt, setInt } from '@aegisjsproject/component/attrs.js';
-import { html } from '@aegisjsproject/core/core.js';
+import { html } from '@aegisjsproject/core/parsers/html.js';
+import { registerCallback } from '@aegisjsproject/core/callbackRegistry.js';
+import { EVENTS, AEGIS_EVENT_HANDLER_CLASS } from '@aegisjsproject/core/events.js';
+
+const inputHandler = registerCallback(
+	'test-input:input',
+	event => event.target.getRootNode().host.value = event.target.innerHTML.trim(),
+);
+
+const template = html`<div contenteditable="true" class="${AEGIS_EVENT_HANDLER_CLASS}" ${EVENTS.onInput}="${inputHandler}">Enter Text</div>`;
 
 class TestInput extends AegisInput {
+	constructor() {
+		super({ template });
+	}
+
 	async [SYMBOLS.sanitizeValue]({ value, shadow }) {
 		const anchor = shadow.getElementById('content');
 
@@ -21,22 +34,13 @@ class TestInput extends AegisInput {
 			throw new TooLongError(`Value must be fewer than ${this.maxLength} chars.`, { anchor });
 		} else {
 			const el = document.createElement('div');
-			el.append(html`${value}`);
+			el.setHTML(value);
 			return el.innerHTML;
 		}
 	}
 
 	async [SYMBOLS.render](type, { shadow,  name, disabled }) {
 		switch(type) {
-			case TRIGGERS.constructed:
-				shadow.append(html`<div id="content" contenteditable="true">Type Stuff!</div>`);
-
-				shadow.getElementById('content').addEventListener('input', event => {
-					this.value = event.target.innerHTML;
-				});
-
-				break;
-
 			case TRIGGERS.formReset:
 				shadow.getElementById('content').textContent = ' ';
 				break;

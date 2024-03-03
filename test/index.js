@@ -1,9 +1,15 @@
-import { html, css, replaceStyles, getUniqueSelector, createPolicy } from '@aegisjsproject/core';
+import { html } from '@aegisjsproject/core/parsers/html.js';
+import { css } from '@aegisjsproject/core/parsers/css.js';
+import { getUniqueSelector, replaceStyles } from '@aegisjsproject/core/dom.js';
+import { attachListeners, EVENTS, AEGIS_EVENT_HANDLER_CLASS } from '@aegisjsproject/core/events.js';
+import { createCallback } from '@aegisjsproject/core/callbackRegistry.js';
+import { createPolicy } from '@aegisjsproject/core/trust.js';
 import { reset } from '@aegisjsproject/styles/reset.js';
 import { baseTheme, lightTheme, darkTheme } from '@aegisjsproject/styles/theme.js';
 import './components/dad-joke.js';
 import './components/input-test.js';
 import './components/aegis-log.js';
+import './components/aegis-modal.js';
 
 createPolicy('default', {
 	createHTML: input => {
@@ -20,22 +26,33 @@ replaceStyles(document, reset, baseTheme, lightTheme, darkTheme, css`.${scope} {
 	color: red;
 }`);
 
-const [DadJoke, InputTest, AegisLog] = await Promise.all([
+const [DadJoke, InputTest, AegisLog, AegisModalElement] = await Promise.all([
 	customElements.whenDefined('dad-joke'),
 	customElements.whenDefined('input-test'),
 	customElements.whenDefined('aegis-log'),
+	customElements.whenDefined('aegis-modal'),
 ]);
 
 const id = crypto.randomUUID();
 
 document.body.append(
-	html`<header>
-		<h1 class="${scope}">Hello, World!</h1>
-	</header>`,
+	attachListeners(html`<header>
+		<h1 class="${scope}">Hello, World! <button id="show"  class="${AEGIS_EVENT_HANDLER_CLASS}" ${EVENTS.onClick}="${createCallback(() => {
+	AegisModalElement.create({
+		header: '<h1>Helo, World!</h1>',
+		body: new DadJoke(),
+		signal: AbortSignal.timeout(30_000),
+	});
+})}">Show AegisModal</button></h1>
+	</header>`),
 	new DadJoke(),
 	new AegisLog(),
 	new DadJoke(),
-	html`<form id="testForm">
+	attachListeners(html`<form id="testForm" class="${AEGIS_EVENT_HANDLER_CLASS}" ${EVENTS.onSubmit}="${createCallback(event => {
+		event.preventDefault();
+		const data = new FormData(event.target);
+		console.log(data);
+	})}">
 		<fieldset>
 			<legend>Test Form</legend>
 			<label for="${id}">Label</label>
@@ -43,7 +60,7 @@ document.body.append(
 		<div>
 			<button type="submit">Submit</button>
 			<button type="reset">Reset</button>
-	</form>`,
+	</form>`),
 );
 
 const input = new InputTest();
@@ -53,8 +70,3 @@ input.required = true;
 input.minLength = 10;
 input.maxLength = 12;
 document.querySelector('fieldset').append(input);
-document.forms.testForm.addEventListener('submit', event => {
-	event.preventDefault();
-	const data = new FormData(event.target);
-	console.log(data);
-});

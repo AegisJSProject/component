@@ -29,18 +29,13 @@ export class AegisInput extends AegisComponent {
 
 	async [SYMBOLS.initialize]({
 		role = 'textbox',
-		mode = 'closed',
-		clonable = false,
-		delegatesFocus = true,
-		slotAssignment = 'named',
-		shadow,
-		internals,
+		...rest
 	} = {}) {
 		if (! (this[SYMBOLS.sanitizeValue] instanceof Function)) {
 			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.setValue.toString()}] method.`);
 		} else if (! this[SYMBOLS.initialized]) {
 			const { shadow: s, internals: i } = await super[SYMBOLS.initialize]({
-				role, mode, clonable, delegatesFocus, slotAssignment, shadow, internals,
+				role, ...rest,
 			});
 
 			protectedData.set(this, { shadow: s, internals: i });
@@ -89,7 +84,7 @@ export class AegisInput extends AegisComponent {
 				internals.ariaInvalid = 'false';
 				internals.states.delete(STATES.invalid);
 				internals.states.add(STATES.valid);
-				this.removeattribute('aria-errormessage');
+				this.removeAttribute('aria-errormessage');
 
 				if (typeof result === 'string') {
 					internals.ariaValueNow = result;
@@ -97,6 +92,7 @@ export class AegisInput extends AegisComponent {
 
 				this.dispatchEvent(new Event(EVENTS.valid));
 			} catch(error) {
+				console.error(error);
 				if (! (error instanceof AegisInputError)) {
 					console.error(error);
 					internals.setValidity({ customError: true });
