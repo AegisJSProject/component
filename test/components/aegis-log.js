@@ -1,11 +1,15 @@
-import { html } from '@aegisjsproject/core';
-import { AegisComponent, SYMBOLS } from '@aegisjsproject/component';
+import { html } from '@aegisjsproject/core/parsers/html.js';
+import { AegisComponent } from '@aegisjsproject/component/base.js';
+import { SYMBOLS } from '@aegisjsproject/component/consts.js';
 
 class AegisLog extends AegisComponent {
 	constructor() {
-		super({ mode: 'open' });
-
-		this.shadowRoot.append(html`<ol part="list" id="list"></ol>`);
+		super({
+			mode: 'open',
+			exportParts: 'list',
+			template: '<ol part="list" id="list"></ol>',
+			styles: 'li {color:red;}',
+		});
 	}
 
 	async [SYMBOLS.render](type, { timestamp, shadow, ...rest }) {

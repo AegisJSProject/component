@@ -1,6 +1,6 @@
 {
   "name": "@aegisjsproject/component",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Base component using `@aegisjsproject/core` & `@aegisjsproject/styles`",
   "keywords": [
     "aegis",
@@ -96,7 +96,7 @@
     "rollup": "^4.9.6"
   },
   "dependencies": {
-    "@aegisjsproject/core": "^0.1.0",
-    "@aegisjsproject/styles": "^0.1.0"
+    "@aegisjsproject/core": "^0.1.2",
+    "@aegisjsproject/styles": "^0.1.1"
   }
 }

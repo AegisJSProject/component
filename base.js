@@ -1,6 +1,11 @@
 import { reset } from '@aegisjsproject/styles/reset.js';
 import { componentBase, componentDarkTheme, componentLightTheme } from '@aegisjsproject/styles/theme.js';
 import { btn } from '@aegisjsproject/styles/button.js';
+import { html } from '@aegisjsproject/core/parsers/html.js';
+import { css } from '@aegisjsproject/core/parsers/css.js';
+import { appendTo } from '@aegisjsproject/core/dom.js';
+import { attachListeners } from '@aegisjsproject/core/events.js';
+import { registerComponent, getRegisteredComponentTags } from '@aegisjsproject/core/componentRegistry.js';
 import { SYMBOLS, TRIGGERS, EVENTS, STATES } from './consts.js';
 
 const observed = new WeakMap();
@@ -28,6 +33,7 @@ export class AegisComponent extends HTMLElement {
 	#internals;
 	#initialized;
 	#initPromise;
+	#hasRender;
 
 	constructor({
 		role = 'document',
@@ -35,13 +41,20 @@ export class AegisComponent extends HTMLElement {
 		clonable = false,
 		delegatesFocus = false,
 		slotAssignment = 'named',
+		exportParts,
+		template,
+		styles,
 	} = {}) {
 		super();
 		this.#initialized = false;
 		this.#initPromise = Promise.withResolvers();
+		this.#hasRender = this[SYMBOLS.render] instanceof Function;
 
 		if (typeof mode === 'string') {
-			this[SYMBOLS.initialize]({ mode, role, clonable, delegatesFocus, slotAssignment });
+			this[SYMBOLS.initialize]({
+				mode, role, clonable, delegatesFocus, slotAssignment,
+				exportParts, template, styles,
+			});
 		}
 	}
 
@@ -52,13 +65,14 @@ export class AegisComponent extends HTMLElement {
 		delegatesFocus = false,
 		slotAssignment = 'named',
 		callback,
+		exportParts,
+		template,
+		styles,
 		shadow,
 		internals,
 	} = {}) {
 		if (this.#initialized) {
 			throw new DOMException('Already initialized.');
-		} else if (! (this[SYMBOLS.render] instanceof Function)) {
-			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`);
 		} else {
 			try {
 				if (shadow instanceof ShadowRoot) {
@@ -73,18 +87,39 @@ export class AegisComponent extends HTMLElement {
 					this.#internals = this.attachInternals();
 				}
 
+				if (Array.isArray(exportParts)) {
+					this.setAttribute('exportparts', exportParts.join(', '));
+				} else if (exportParts !== null && typeof exportParts === 'object') {
+					this.setAttribute(
+						'exportparts',
+						Object.entries(exportParts).map(([k, v]) => `${k}:${v}`).join(', ')
+					);
+				} else if (typeof exportParts === 'string') {
+					this.setAttribute('exportparts', exportParts);
+				}
+
 				this.#internals.role = role;
 				this.#internals.states.add(STATES.loading);
 
-				if (callback instanceof Function) {
-					callback.call(this, {
-						internals: this.#internals,
-						shadow: this.#shadow,
-						target: this,
-					});
+				if (Array.isArray(styles)) {
+					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, ...styles];
+				} else if (styles instanceof CSSStyleSheet) {
+					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, styles];
+				} else if (typeof styles === 'string') {
+					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, css`${styles}`];
+				} else {
+					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme];
 				}
 
-				this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme];
+				if (template instanceof HTMLTemplateElement) {
+					appendTo(this.#shadow, template.content.cloneNode(true));
+				} else if (template instanceof Element || template instanceof DocumentFragment) {
+					appendTo(this.#shadow, template.cloneNode(true));
+				} else if (typeof template === 'string' && template.length !== 0) {
+					appendTo(this.#shadow, html`${template}`);
+				}
+
+				attachListeners(this.#shadow);
 
 				this.#shadow.addEventListener('slotchange', event => {
 					event.stopPropagation();
@@ -109,12 +144,18 @@ export class AegisComponent extends HTMLElement {
 					}
 				});
 
-				this.#initialized = true;
+				if (callback instanceof Function) {
+					callback.call(this, {
+						internals: this.#internals,
+						shadow: this.#shadow,
+						target: this,
+					});
+				}
 
+				this.#initialized = true;
 				this.triggerUpdate(TRIGGERS.constructed);
 				this.#internals.states.add(STATES.initialized);
 				this.#internals.states.delete(STATES.loading);
-
 				this.#initPromise.resolve();
 				return { internals: this.#internals, shadow: this.#shadow };
 			} catch (err) {
@@ -132,7 +173,7 @@ export class AegisComponent extends HTMLElement {
 	}
 
 	get [SYMBOLS.getStates]() {
-		return Array.from(this.#internals.states.values());
+		return Object.freeze(Array.from(this.#internals.states.values()));
 	}
 
 	get [SYMBOLS.initialized]() {
@@ -142,22 +183,29 @@ export class AegisComponent extends HTMLElement {
 	async connectedCallback() {
 		await whenIntersecting(this);
 		this.dispatchEvent(new Event(EVENTS.connected));
-		await this.triggerUpdate(TRIGGERS.connected);
+
+		if (this.#hasRender) {
+			await this.triggerUpdate(TRIGGERS.connected);
+		}
 	}
 
 	async disconnectedCallback() {
 		this.dispatchEvent(new Event(EVENTS.disconnected));
-		await this.triggerUpdate(TRIGGERS.disconnected);
+
+		if (this.#hasRender) {
+			await this.triggerUpdate(TRIGGERS.disconnected);
+		}
 	}
 
 	async adoptedCallback() {
 		this.dispatchEvent(new Event(EVENTS.adopted));
-		await this.triggerUpdate(TRIGGERS.adopted);
+
+		if (this.#hasRender) {
+			await this.triggerUpdate(TRIGGERS.adopted);
+		}
 	}
 
 	async attributeChangedCallback(name, oldValue, newValue) {
-		// Do not trigger render if not connected
-
 		if (name === 'loading') {
 			switch (newValue.toLowerCase()) {
 				case 'lazy':
@@ -177,17 +225,23 @@ export class AegisComponent extends HTMLElement {
 			}
 		}
 
-		if (this.isConnected && oldValue !== newValue) {
+		if (this.#hasRender && oldValue !== newValue) {
 			await this.triggerUpdate(TRIGGERS.attributeChanged, { name, oldValue, newValue });
 		}
 	}
 
 	async triggerUpdate(type = TRIGGERS.unknown, data = {}, { signal } = {}) {
-		await new Promise((resolve, reject) => {
+		await new Promise(async (resolve, reject) => {
 			if (signal instanceof AbortSignal && signal.aborted) {
 				reject(signal.reason);
+			} else if (! this.#hasRender) {
+				reject(Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`));
 			} else {
 				const controller = new AbortController();
+
+				if (type !== TRIGGERS.constructed) {
+					await this.whenInitialized;
+				}
 
 				const af = requestAnimationFrame(async timestamp => {
 					this.#internals.ariaBusy = 'true';
@@ -277,11 +331,15 @@ export class AegisComponent extends HTMLElement {
 		return ['theme', 'loading'];
 	}
 
-	static register(tag, opts = {}) {
-		customElements.define(tag, this, opts);
+	static get registeredComponents() {
+		return getRegisteredComponentTags();
 	}
 
-	static async whenDefined(tag) {
+	static register(tag, opts = {}) {
+		registerComponent(tag, this, opts);
+	}
+
+	static async whenRegistered(tag) {
 		return await customElements.whenDefined(tag);
 	}
 }

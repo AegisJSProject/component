@@ -1,4 +1,4 @@
-import { css } from '@aegisjsproject/core';
+import { css } from '@aegisjsproject/core/parsers/css.js';
 import { gray } from '@aegisjsproject/styles/palette/bootstrap.js';
 
 export const styles = css`:host {
