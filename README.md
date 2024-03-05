@@ -35,19 +35,17 @@ Base component using [`@aegisjsproject/core`](https://github.com/AegisJSProject/
 import { AegisComponent, TRIGGERS, SYMBOLS } from '@aegisjsproject/component';
 import { html, css, appendTo, addStyles } from '@aegisjsproject/core';
 
-export class HTMLHelloWorldElement extends AegisComponent {
-  [SYMBOLS.render](type, { shadow }) {
-    switch(type) {
-      case TRIGGERS.constructed:
-        appendTo(shadow, html`<h1 class="foo">Hello, World!</h1>`);
+const template = html`<h1>Hello, World!</h1>`;
 
-        addStyles(shadow, css`
-          .foo {
-            color: red;
-          }
-        `);
-       break;
-    }
+const stlyes = css`
+.foo {
+  color: red;
+}
+`
+
+export class HTMLHelloWorldElement extends AegisComponent {
+  constructor() {
+    super({ template, styles });
   }
 }
 

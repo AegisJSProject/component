@@ -9,7 +9,6 @@ import { baseTheme, lightTheme, darkTheme } from '@aegisjsproject/styles/theme.j
 import './components/dad-joke.js';
 import './components/input-test.js';
 import './components/aegis-log.js';
-import './components/aegis-modal.js';
 
 createPolicy('default', {
 	createHTML: input => {
@@ -26,25 +25,18 @@ replaceStyles(document, reset, baseTheme, lightTheme, darkTheme, css`.${scope} {
 	color: red;
 }`);
 
-const [DadJoke, InputTest, AegisLog, AegisModalElement] = await Promise.all([
+const [DadJoke, InputTest, AegisLog] = await Promise.all([
 	customElements.whenDefined('dad-joke'),
 	customElements.whenDefined('input-test'),
 	customElements.whenDefined('aegis-log'),
-	customElements.whenDefined('aegis-modal'),
 ]);
 
 const id = crypto.randomUUID();
 
 document.body.append(
-	attachListeners(html`<header>
-		<h1 class="${scope}">Hello, World! <button id="show"  class="${AEGIS_EVENT_HANDLER_CLASS}" ${EVENTS.onClick}="${createCallback(() => {
-	AegisModalElement.create({
-		header: '<h1>Helo, World!</h1>',
-		body: new DadJoke(),
-		signal: AbortSignal.timeout(30_000),
-	});
-})}">Show AegisModal</button></h1>
-	</header>`),
+	html`<header>
+		<h1 class="${scope}">Hello, World!</h1>
+	</header>`,
 	new DadJoke(),
 	new AegisLog(),
 	new DadJoke(),
