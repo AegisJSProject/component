@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.2] - 2024-03-10
+
+### Added
+- Add WIP Aegis Checkbox base class/component
+- Add Input Errors as static properties to base AegisInput
+
+### Changed
+- Misc updates
+
 ## [v0.1.1] - 2024-03-03
 
 ### Changed

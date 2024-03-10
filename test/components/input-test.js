@@ -1,20 +1,16 @@
 import { AegisInput } from '@aegisjsproject/component/input.js';
-import {
-	ValueMissingError, TypeMismatchError, TooLongError,
-	TooShortError,
-} from '@aegisjsproject/component/errors.js';
 import { TRIGGERS, SYMBOLS } from '@aegisjsproject/component/consts.js';
 import { getInt, setInt } from '@aegisjsproject/component/attrs.js';
 import { html } from '@aegisjsproject/core/parsers/html.js';
 import { registerCallback } from '@aegisjsproject/core/callbackRegistry.js';
-import { EVENTS, AEGIS_EVENT_HANDLER_CLASS } from '@aegisjsproject/core/events.js';
+import { EVENTS } from '@aegisjsproject/core/events.js';
 
 const inputHandler = registerCallback(
 	'test-input:input',
 	event => event.target.getRootNode().host.value = event.target.innerHTML.trim(),
 );
 
-const template = html`<div contenteditable="true" class="${AEGIS_EVENT_HANDLER_CLASS}" ${EVENTS.onInput}="${inputHandler}">Enter Text</div>`;
+const template = html`<div contenteditable="true" ${EVENTS.onInput}="${inputHandler}"></div>`;
 
 class TestInput extends AegisInput {
 	constructor() {
@@ -25,13 +21,13 @@ class TestInput extends AegisInput {
 		const anchor = shadow.getElementById('content');
 
 		if (typeof value !== 'string') {
-			throw new TypeMismatchError('Value must be a string.', { anchor });
+			throw new AegisInput.TypeMismatchError('Value must be a string.', { anchor });
 		} else if (this.required && value.length === 0) {
-			throw new ValueMissingError('Value is required.');
+			throw new AegisInput.ValueMissingError('Value is required.');
 		} else if (value.length < this.minLength) {
-			throw new TooShortError(`Value must be at least ${this.minLength} chars.`, { anchor });
+			throw new AegisInput.TooShortError(`Value must be at least ${this.minLength} chars.`, { anchor });
 		} else if (value.length > this.maxLength) {
-			throw new TooLongError(`Value must be fewer than ${this.maxLength} chars.`, { anchor });
+			throw new AegisInput.TooLongError(`Value must be fewer than ${this.maxLength} chars.`, { anchor });
 		} else {
 			const el = document.createElement('div');
 			el.setHTML(value);
@@ -39,8 +35,12 @@ class TestInput extends AegisInput {
 		}
 	}
 
-	async [SYMBOLS.render](type, { shadow,  name, disabled }) {
+	async [SYMBOLS.render](type, { shadow, name, disabled }) {
 		switch(type) {
+			case TRIGGERS.constructed:
+				this.value = 'Enter Some Text!';
+				break;
+
 			case TRIGGERS.formReset:
 				shadow.getElementById('content').textContent = ' ';
 				break;
