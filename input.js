@@ -15,12 +15,6 @@ import {
 	StepMismatchError, BadInputError,
 } from './errors.js';
 
-export const ERRORS = {
-	AegisInputError, ValueMissingError, TypeMismatchError, PatternMismatchError,
-	TooLongError, TooShortError, RangeUnderflowError, RangeOverflowError,
-	StepMismatchError, BadInputError,
-};
-
 /**
  * @see https://web.dev/articles/more-capable-form-controls
  */
@@ -31,9 +25,7 @@ export class AegisInput extends AegisComponent {
 		role = 'textbox',
 		...rest
 	} = {}) {
-		if (! (this[SYMBOLS.sanitizeValue] instanceof Function)) {
-			throw new Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.setValue.toString()}] method.`);
-		} else if (! this[SYMBOLS.initialized]) {
+		if (! this[SYMBOLS.initialized]) {
 			const { shadow: s, internals: i } = await super[SYMBOLS.initialize]({
 				role, ...rest,
 			});
@@ -77,17 +69,19 @@ export class AegisInput extends AegisComponent {
 			const { internals, shadow } = protectedData.get(this);
 
 			try {
-				const result  = await this[SYMBOLS.sanitizeValue]({ value, internals, shadow });
-				this.#value = result;
-				internals.setFormValue(result);
+				const state = this[SYMBOLS.sanitizeValue] instanceof Function
+					? await this[SYMBOLS.sanitizeValue]({ value, internals, shadow })
+					: value;
+				this.#value = state;
+				internals.setFormValue(value, state);
 				internals.setValidity({}, '');
 				internals.ariaInvalid = 'false';
 				internals.states.delete(STATES.invalid);
 				internals.states.add(STATES.valid);
 				this.removeAttribute('aria-errormessage');
 
-				if (typeof result === 'string') {
-					internals.ariaValueNow = result;
+				if (typeof value === 'string') {
+					internals.ariaValueNow = value;
 				}
 
 				this.dispatchEvent(new Event(EVENTS.valid));
@@ -204,4 +198,44 @@ export class AegisInput extends AegisComponent {
 	static get observedAttributes() {
 		return [...AegisComponent.observedAttributes, 'required', 'disabled', 'readonly'];
 	}
-} 
+
+	static get AegisInputError() {
+		return AegisInputError;
+	}
+
+	static get ValueMissingError() {
+		return ValueMissingError;
+	}
+
+	static get TypeMismatchError() {
+		return TypeMismatchError;
+	}
+
+	static get PatternMismatchError() {
+		return PatternMismatchError;
+	}
+
+	static get TooLongError() {
+		return TooLongError;
+	}
+
+	static get TooShortError() {
+		return TooShortError;
+	}
+
+	static get RangeUnderflowError() {
+		return RangeUnderflowError;
+	}
+
+	static get RangeOverflowError() {
+		return RangeOverflowError;
+	}
+
+	static get StepMismatchError() {
+		return StepMismatchError;
+	}
+
+	static get BadInputError() {
+		return BadInputError;
+	}
+}
