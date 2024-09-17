@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.3] - 2024-09-17
+
+### Changed
+- Updates eslint and config (now uses `@shgysk8zer0/eslint-config`)
+- Updates versions on testing scripts
+- Updates GitHub Workflows
+
 ## [v0.1.2] - 2024-03-10
 
 ### Added
