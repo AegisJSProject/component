@@ -1,6 +1,6 @@
 {
   "name": "@aegisjsproject/component",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Base component using `@aegisjsproject/core` & `@aegisjsproject/styles`",
   "keywords": [
     "aegis",
@@ -91,7 +91,8 @@
   "homepage": "https://github.com/AegisJSProject/component#readme",
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "eslint": "^8.56.0",
+    "@shgysk8zer0/eslint-config": "^1.0.1",
+    "eslint": "^9.10.0",
     "http-server": "^14.1.1",
     "rollup": "^4.9.6"
   },
