@@ -1,6 +1,6 @@
 import { reset } from '@aegisjsproject/styles/reset.js';
 import { componentBase, componentDarkTheme, componentLightTheme } from '@aegisjsproject/styles/theme.js';
-import { btn } from '@aegisjsproject/styles/button.js';
+import { btn, btnPrimary, btnDanger, btnSuccess, btnWarning } from '@aegisjsproject/styles/button.js';
 import { html } from '@aegisjsproject/core/parsers/html.js';
 import { css } from '@aegisjsproject/core/parsers/css.js';
 import { appendTo } from '@aegisjsproject/core/dom.js';
@@ -34,6 +34,7 @@ export class AegisComponent extends HTMLElement {
 	#initialized;
 	#initPromise;
 	#hasRender;
+	#connected = Promise.withResolvers();
 
 	constructor({
 		role = 'document',
@@ -77,6 +78,8 @@ export class AegisComponent extends HTMLElement {
 			try {
 				if (shadow instanceof ShadowRoot) {
 					this.#shadow = shadow;
+				} else if (this.shadowRoot instanceof ShadowRoot) {
+					this.#shadow = this.shadowRoot;
 				} else {
 					this.#shadow = this.attachShadow({ mode, clonable, delegatesFocus, slotAssignment });
 				}
@@ -102,13 +105,13 @@ export class AegisComponent extends HTMLElement {
 				this.#internals.states.add(STATES.loading);
 
 				if (Array.isArray(styles)) {
-					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, ...styles];
+					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, ...styles];
 				} else if (styles instanceof CSSStyleSheet) {
-					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, styles];
+					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, styles];
 				} else if (typeof styles === 'string') {
-					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme, css`${styles}`];
+					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, css`${styles}`];
 				} else {
-					this.#shadow.adoptedStyleSheets = [reset, btn, componentBase, componentDarkTheme, componentLightTheme];
+					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme];
 				}
 
 				if (template instanceof HTMLTemplateElement) {
@@ -182,6 +185,7 @@ export class AegisComponent extends HTMLElement {
 
 	async connectedCallback() {
 		await whenIntersecting(this);
+		this.#connected.resolve();
 		this.dispatchEvent(new Event(EVENTS.connected));
 
 		if (this.#hasRender) {
@@ -190,6 +194,7 @@ export class AegisComponent extends HTMLElement {
 	}
 
 	async disconnectedCallback() {
+		this.#connected = Promise.withResolvers();
 		this.dispatchEvent(new Event(EVENTS.disconnected));
 
 		if (this.#hasRender) {
@@ -282,13 +287,7 @@ export class AegisComponent extends HTMLElement {
 	}
 
 	get whenConnected() {
-		return new Promise(resolve => {
-			if (this.isConnected) {
-				resolve();
-			} else {
-				this.addEventListener(EVENTS.connected, () => resolve(), { once: true });
-			}
-		});
+		return this.#connected.promise;
 	}
 
 	get whenInitialized() {

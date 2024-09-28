@@ -5,16 +5,12 @@ import { updateIcon } from '../icons.js';
 
 const update = registerCallback('dad-joke:update', event => event.target.getRootNode().host.update());
 
-const template = html`<div part="container">
+export const template = html`<div part="container">
 	<div part="joke">
 		<slot name="joke">Loading...</slot>
 	</div>
 	<button type="button" id="update-btn" ${EVENTS.onClick}="${update}" class="btn btn-primary" part="btn" autofocus="">
 		<span>Get new Dad Joke</span>
+		${updateIcon}
 	</button>
 </div>`;
-
-// For now, elements of a different namespace, such as `<svg>` are not supported
-template.getElementById('update-btn').append(updateIcon.cloneNode(true));
-
-export { template };

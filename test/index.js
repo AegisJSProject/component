@@ -4,6 +4,8 @@ import { getUniqueSelector, replaceStyles } from '@aegisjsproject/core/dom.js';
 import { attachListeners, EVENTS } from '@aegisjsproject/core/events.js';
 import { createPolicy } from '@aegisjsproject/core/trust.js';
 import { reset } from '@aegisjsproject/styles/reset.js';
+import { properties } from '@aegisjsproject/styles/properties.js';
+import { btn, btnSuccess, btnDanger } from '@aegisjsproject/styles/button.js';
 import { baseTheme, lightTheme, darkTheme } from '@aegisjsproject/styles/theme.js';
 import './components/dad-joke.js';
 import './components/input-test.js';
@@ -21,7 +23,7 @@ createPolicy('default', {
 
 const scope = getUniqueSelector();
 
-replaceStyles(document, reset, baseTheme, lightTheme, darkTheme, css`.${scope} {
+replaceStyles(document, properties, reset, baseTheme, lightTheme, darkTheme, btn, btnSuccess, btnDanger, css`.${scope} {
 	color: red;
 }`);
 
@@ -37,9 +39,9 @@ const id = crypto.randomUUID();
 document.body.append(attachListeners(
 	html`<header>
 		<h1 class="${scope}">Hello, World!</h1>
-	</header>,
-	${new DadJoke()},
-	${new AegisLog()},
+	</header>
+	${new DadJoke()}
+	${new AegisLog()}
 	<dad-joke></dad-joke>
 	<form id="testForm" ${EVENTS.onSubmit}="${event => {
 	event.preventDefault();
@@ -54,10 +56,10 @@ document.body.append(attachListeners(
 			</div>
 			<div>
 				<label for="check">Checkbox</label>
-				<checkbox-test id="check" name="check"><span slot="tick">X</span></checkbox-test>
+				<checkbox-test id="check" name="check" value="checked" required=""><span slot="tick">X</span></checkbox-test>
 		</fieldset>
 		<div>
-			<button type="submit">Submit</button>
-			<button type="reset">Reset</button>
+			<button type="submit" class="btn btn-success">Submit</button>
+			<button type="reset" class="btn btn-danger">Reset</button>
 	</form>`),
 );

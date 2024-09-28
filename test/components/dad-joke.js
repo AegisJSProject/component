@@ -1,6 +1,7 @@
 import { html } from '@aegisjsproject/core/parsers/html.js';
 import { replace } from '@aegisjsproject/core/dom.js';
 import { AegisComponent } from '@aegisjsproject/component/base.js';
+import { componentBorder } from '@aegisjsproject/styles/theme.js';
 import { TRIGGERS, SYMBOLS } from '@aegisjsproject/component/consts.js';
 import { styles } from './dad-joke-styles.js';
 import { template } from './dad-joke-html.js';
@@ -9,7 +10,7 @@ class HTMLDataJokeElement extends AegisComponent {
 	constructor() {
 		super({
 			template,
-			styles,
+			styles: [componentBorder, styles],
 			exportParts: { joke: 'dad-joke', btn: 'refresh-joke-btn' },
 		});
 	}
