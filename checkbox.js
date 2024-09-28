@@ -5,6 +5,7 @@ const protectedData = new WeakMap();
 
 function updateChecked(el) {
 	const internals = protectedData.get(el).internals;
+	el.value = el.getAttribute('value') ?? '';
 
 	if (el.checked) {
 		internals.ariaChecked = 'true';
@@ -33,8 +34,11 @@ export class AegisCheckbox extends AegisInput {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if (name === 'checked') {
 			updateChecked(this);
+		} else if (name === 'required') {
+			updateChecked(this);
+			super.attributeChangedCallback(name, oldValue, newValue);
 		} else {
-			super.addtributeChangedCallback(name, oldValue, newValue);
+			super.attributeChangedCallback(name, oldValue, newValue);
 		}
 	}
 

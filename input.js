@@ -4,7 +4,7 @@ import { getBool, setBool, getString, setString } from './attrs.js';
 
 const protectedData = new WeakMap();
 
-const getInternals = target => protectedData.get(target);
+const getInternals = target => protectedData.get(target)?.internals;
 
 const whenInit = async (target, callback) => await target.whenInitialized
 	.then(() => callback.call(target, protectedData.get(target)));
