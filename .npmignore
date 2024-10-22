@@ -10,6 +10,7 @@ test/
 .nvmrc
 importmap.json
 importmap.yaml
+index.html
 *.config.js
 *.gz
 *.tgz
