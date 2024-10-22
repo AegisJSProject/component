@@ -12,8 +12,7 @@ class AegisLog extends AegisComponent {
 		});
 	}
 
-	async [SYMBOLS.render](type, { timestamp, shadow, ...rest }) {
-		console.log({ type, timestamp, ...rest });
+	async [SYMBOLS.render](type, { timestamp, shadow }) {
 		shadow.getElementById('list').append(html`<li>${type} @ ${timestamp}ms</li>`);
 	}
 }

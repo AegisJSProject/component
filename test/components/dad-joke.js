@@ -6,7 +6,7 @@ import { TRIGGERS, SYMBOLS } from '@aegisjsproject/component/consts.js';
 import { styles } from './dad-joke-styles.js';
 import { template } from './dad-joke-html.js';
 
-class HTMLDataJokeElement extends AegisComponent {
+class HTMLDadJokeElement extends AegisComponent {
 	constructor() {
 		super({
 			template,
@@ -15,19 +15,17 @@ class HTMLDataJokeElement extends AegisComponent {
 		});
 	}
 
-	async [SYMBOLS.render](type, { signal, ...data }) {
+	async [SYMBOLS.render](type, { signal }) {
 		switch(type) {
 			case TRIGGERS.connected:
-				this.update({ signal });
+				await this.update({ signal });
 				break;
-
-			default:
-				console.log({ type, ...data });
 		}
 	}
 
 	async update({ signal } = {}) {
-		replace(this, html`<p slot="joke">${await HTMLDataJokeElement.getJoke({ signal })}</p>`);
+		const joke = await HTMLDadJokeElement.getJoke({ signal });
+		replace(this, html`<p slot="joke">${joke}</p>`);
 	}
 
 	static async getJoke({ signal } = {}) {
@@ -42,4 +40,4 @@ class HTMLDataJokeElement extends AegisComponent {
 	}
 }
 
-HTMLDataJokeElement.register('dad-joke');
+HTMLDadJokeElement.register('dad-joke');

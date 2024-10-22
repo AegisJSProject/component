@@ -7,6 +7,7 @@ import { appendTo } from '@aegisjsproject/core/dom.js';
 import { attachListeners } from '@aegisjsproject/core/events.js';
 import { registerComponent, getRegisteredComponentTags } from '@aegisjsproject/core/componentRegistry.js';
 import { SYMBOLS, TRIGGERS, EVENTS, STATES } from './consts.js';
+import { observeStateChanges, unobserveStateChanges } from '@aegisjsproject/state/state.js';
 
 const observed = new WeakMap();
 
@@ -184,6 +185,13 @@ export class AegisComponent extends HTMLElement {
 	}
 
 	async connectedCallback() {
+		if (Array.isArray(this.constructor[SYMBOLS.observeStates])) {
+			observeStateChanges(
+				({ diff, state }) => this.triggerUpdate(TRIGGERS.stateChanged, { diff, state }),
+				...this.constructor[SYMBOLS.observeStates]
+			);
+
+		}
 		await whenIntersecting(this);
 		this.#connected.resolve();
 		this.dispatchEvent(new Event(EVENTS.connected));
@@ -194,6 +202,10 @@ export class AegisComponent extends HTMLElement {
 	}
 
 	async disconnectedCallback() {
+		if (Array.isArray(this.constructor[SYMBOLS.observeStates])) {
+			unobserveStateChanges(this);
+		}
+
 		this.#connected = Promise.withResolvers();
 		this.dispatchEvent(new Event(EVENTS.disconnected));
 
@@ -239,9 +251,7 @@ export class AegisComponent extends HTMLElement {
 		await new Promise(async (resolve, reject) => {
 			if (signal instanceof AbortSignal && signal.aborted) {
 				reject(signal.reason);
-			} else if (! this.#hasRender) {
-				reject(Error(`${this.tagName.toLowerCase()} does not have a [${SYMBOLS.render.toString()}] method.`));
-			} else {
+			} else if (this.#hasRender) {
 				const controller = new AbortController();
 
 				if (type !== TRIGGERS.constructed) {
@@ -259,8 +269,9 @@ export class AegisComponent extends HTMLElement {
 							shadow: this.#shadow,
 							internals: this.#internals,
 							styleSheets: this.#shadow.adoptedStyleSheets,
-							signal,
+							signal: signal instanceof AbortSignal ? AbortSignal.any([signal, controller.signal]) : controller.signal,
 							timestamp,
+							abort: reason => controller.abort(reason),
 						});
 
 						resolve(result);
@@ -268,7 +279,9 @@ export class AegisComponent extends HTMLElement {
 						reject(err);
 					} finally {
 						this.#internals.ariaBusy = 'false';
-						controller.abort();
+						if (! controller.signal.aborted) {
+							controller.abort();
+						}
 					}
 				});
 

@@ -12,6 +12,7 @@
 			connect-src 'self' https://icanhazdadjoke.com https://unpkg.com/@shgysk8zer0/;
 			trusted-types empty#html empty#script aegis-sanitizer#html default;
 			require-trusted-types-for 'script';" />
+		<base href="/test/" />
 		<title>Aegis Component Test</title>
 		<script type="importmap" integrity="sha384-9r2le7Ki5JTkpwyzHCNRePSsl26daK+kcsjjkgwVx08e85iRuzIj97aZdO83g4Mg">
 			{
@@ -31,5 +32,10 @@
 		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" integrity="sha256-R0JDqpQmNTidjyYggk9uQRqu9ypLx95G8HLVWIed80Q=" src="https://unpkg.com/@shgysk8zer0/kazoo@1.0.7/harden.js" fetchpriority="auto"></script>
 		<script type="module" referrerpolicy="no-referrer" src="./index.js"></script>
 	</head>
-	<body></body>
+	<body>
+		<nav id="nav"></nav>
+		<main id="root">
+			<aegis-counter></aegis-counter>
+		</main>
+	</body>
 </html>

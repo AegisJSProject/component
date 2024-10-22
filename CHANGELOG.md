@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.5] - 2024-10-21
+
+### Added
+- Add support for `@aegisjsproject/state` and `@aegisjsproject/router`
+- Add `AegisView`
+
+### Changed
+- Do not bundle everything external in `component.cjs`
+
 ## [v0.1.4] - 2024-09-28
 
 ### Changed
