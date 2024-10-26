@@ -19,9 +19,12 @@ export class AegisView extends AegisComponent {
 	constructor({
 		title,
 		description,
+		clonable = false,
+		serializable = false,
+		mode = 'closed',
 		...rest
 	} = {}) {
-		super(rest);
+		super({ clonable, serializable, mode, ... rest});
 
 		if (typeof title !== 'undefined') {
 			this[SYMBOLS.title] = title;

@@ -8,7 +8,7 @@ const [DadJoke, AegisLog] = await Promise.all([
 
 const id = crypto.randomUUID();
 
-export default html`${new DadJoke()}
+export default () => html`${new DadJoke()}
 <aegis-counter></aegis-counter>
 ${new AegisLog()}
 <form id="testForm" ${EVENTS.onSubmit}="${event => {

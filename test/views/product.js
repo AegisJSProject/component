@@ -1,11 +1,12 @@
 import { SYMBOLS, TRIGGERS } from '@aegisjsproject/component/consts.js';
 import { AegisView } from '@aegisjsproject/component/view.js';
+
 class AegisProductView extends AegisView {
 	#params;
 
 	constructor({
-		state: { productName = 'Unknown Product' },
-		url,
+		state: { productName = 'Unknown Product' } = {},
+		matches,
 		...params
 	} = {}) {
 		super({
@@ -16,13 +17,15 @@ class AegisProductView extends AegisView {
 					<pre><code><slot name="data">Loading...</slot></code></pre>
 				</details>
 			`,
-			title: `Product Details for ${url.matches.pathname.groups.id}`,
-			description: `Product Details Pagefor ${url.matches.pathname.groups.id}`,
+			title: `Product Details for ${matches.pathname.groups.id}`,
+			description: `Product Details Pagefor ${matches.pathname.groups.id}`,
 		});
 
-		this.#params = params;
+		params.signal.addEventListener('abort', event => console.info(event.target.reason));
 
-		this.dataset.productId = url.matches.pathname.groups.id;
+		this.#params = { matches, ...params};
+
+		this.dataset.productId = matches.pathname.groups.id;
 	}
 
 	async [SYMBOLS.render](type, { state, shadow, diff }) {

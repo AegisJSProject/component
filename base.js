@@ -41,6 +41,7 @@ export class AegisComponent extends HTMLElement {
 		role = 'document',
 		mode = 'closed',
 		clonable = false,
+		serializable = true,
 		delegatesFocus = false,
 		slotAssignment = 'named',
 		exportParts,
@@ -52,11 +53,14 @@ export class AegisComponent extends HTMLElement {
 		this.#initPromise = Promise.withResolvers();
 		this.#hasRender = this[SYMBOLS.render] instanceof Function;
 
-		if (typeof mode === 'string') {
+		if (typeof mode === 'string' && ! (this.shadowRoot instanceof ShadowRoot && ! this.shadowRoot.clonable)) {
 			this[SYMBOLS.initialize]({
-				mode, role, clonable, delegatesFocus, slotAssignment,
+				mode, role, clonable, serializable, delegatesFocus, slotAssignment,
 				exportParts, template, styles,
 			});
+		} else {
+			this.#initialized = true;
+			this.#initPromise.resolve();
 		}
 	}
 
@@ -64,6 +68,7 @@ export class AegisComponent extends HTMLElement {
 		role = 'document',
 		mode = 'closed',
 		clonable = false,
+		serializable = false,
 		delegatesFocus = false,
 		slotAssignment = 'named',
 		callback,
@@ -81,8 +86,8 @@ export class AegisComponent extends HTMLElement {
 					this.#shadow = shadow;
 				} else if (this.shadowRoot instanceof ShadowRoot) {
 					this.#shadow = this.shadowRoot;
-				} else {
-					this.#shadow = this.attachShadow({ mode, clonable, delegatesFocus, slotAssignment });
+				} else if (! (this.shadowRoot instanceof ShadowRoot)) {
+					this.#shadow = this.attachShadow({ mode, clonable, serializable, delegatesFocus, slotAssignment });
 				}
 
 				if (internals instanceof ElementInternals) {

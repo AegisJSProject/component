@@ -1,6 +1,6 @@
 {
   "name": "@aegisjsproject/component",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Base component using `@aegisjsproject/core` & `@aegisjsproject/styles`",
   "keywords": [
     "aegis",
@@ -90,8 +90,8 @@
   },
   "homepage": "https://github.com/AegisJSProject/component#readme",
   "devDependencies": {
-    "@aegisjsproject/router": "^1.0.1",
-    "@aegisjsproject/state": "^1.0.1",
+    "@aegisjsproject/router": "^1.0.5",
+    "@aegisjsproject/state": "^1.0.2",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@shgysk8zer0/eslint-config": "^1.0.1",
     "eslint": "^9.10.0",
