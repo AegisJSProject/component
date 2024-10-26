@@ -1,7 +1,7 @@
 import { html } from '@aegisjsproject/core/parsers/html.js';
 import { css } from '@aegisjsproject/core/parsers/css.js';
 import { getUniqueSelector } from '@aegisjsproject/core/dom.js';
-import { attachListeners } from '@aegisjsproject/core/events.js';
+import { observeEvents } from '@aegisjsproject/core/events.js';
 import { createPolicy } from '@aegisjsproject/core/trust.js';
 import { reset } from '@aegisjsproject/styles/reset.js';
 import { properties } from '@aegisjsproject/styles/properties.js';
@@ -13,7 +13,7 @@ import { pages } from './consts.js';
 import './components/dad-joke.js';
 import './components/input-test.js';
 import './components/aegis-log.js';
-import './components/checkbox-test.js';
+// import './components/checkbox-test.js';
 import './components/link.js';
 import './components/counter.js';
 
@@ -21,10 +21,11 @@ init({
 	'/product/:id': '@aegisjsproject/component/test/views/product.js',
 	'/product/?q=:query': '@aegisjsproject/component/test/views/product-search.js',
 	'/search': '@aegisjsproject/component/test/views/search.js',
-	':path': '@aegisjsproject/component/test/views/test.js',
+	'/test/:path': '@aegisjsproject/component/test/views/test.js',
 	'/test/': '@aegisjsproject/component/test/views/home.js',
 }, {
 	preload: true,
+	rootEl: '#root',
 });
 
 createPolicy('default', {
@@ -71,4 +72,4 @@ document.body.prepend(
 	</header>`
 );
 
-attachListeners(document.body);
+observeEvents(document.body);
