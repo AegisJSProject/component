@@ -6,7 +6,7 @@
 		<meta name="color-scheme" content="light dark" />
 		<meta http-equiv="Content-Security-Policy"
 			content="default-src 'none';
-			script-src 'self' https://unpkg.com/@shgysk8zer0/ https://unpkg.com/@aegisjsproject/ 'sha384-vcCr7qWz8Z6foX8DSh8n9PnNVZZwjv98jj4ButH/ACPlPxscPwMySuPtjhaqnj6c';
+			script-src 'self' https://unpkg.com/@shgysk8zer0/ https://unpkg.com/@aegisjsproject/ 'sha384-/4t2o3Ok5q2Z/fokJmGIDCeOo2E5BYV5n7m2zpqjmymccqplm5MYfZIjcp5AUGHB';
 			style-src 'self' blob: data:;
 			img-src 'self';
 			connect-src 'self' https://icanhazdadjoke.com https://unpkg.com/@shgysk8zer0/;
@@ -25,12 +25,13 @@
 					"@aegisjsproject/component/": "../",
 					"@aegisjsproject/state": "../node_modules/@aegisjsproject/state/state.mjs",
 					"@aegisjsproject/router": "../node_modules/@aegisjsproject/router/router.mjs",
+					"@aegisjsproject/callback-registry": "/node_modules/@aegisjsproject/callback-registry/callbackRegistry.js",
 					"@aegisjsproject/": "../node_modules/@aegisjsproject/",
 					"@shgysk8zer0/": "https://unpkg.com/@shgysk8zer0/"
 				}
 			}
 		</script>
-		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" integrity="sha256-ioMplm3/NbRGxz6jHKnbyb4NHkTYfP/FAXcPwPquVdk=" src="https://unpkg.com/@shgysk8zer0/polyfills@0.4.2/all.min.js" fetchpriority="auto"></script>
+		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" src="/node_modules/@shgysk8zer0/polyfills/browser.min.js" fetchpriority="auto"></script>
 		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" integrity="sha256-R0JDqpQmNTidjyYggk9uQRqu9ypLx95G8HLVWIed80Q=" src="https://unpkg.com/@shgysk8zer0/kazoo@1.0.7/harden.js" fetchpriority="auto"></script>
 		<script type="module" referrerpolicy="no-referrer" src="./index.js"></script>
 	</head>
