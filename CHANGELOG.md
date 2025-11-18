@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v0.1.6] - 2025-11-18
+## [v0.1.7] - 2025-11-18
 
 ### Changed
 - Update `.nvmrc` and `npm-publish.yml`
