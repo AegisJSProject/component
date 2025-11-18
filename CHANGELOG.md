@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.6] - 2025-11-18
+
+### Changed
+- Update `.nvmrc` and `npm-publish.yml`
+- Update polyfills/sanitizer
+
 ## [v0.1.6] - 2024-10-26
 
 ### Added
