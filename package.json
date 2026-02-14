@@ -95,7 +95,7 @@
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@shgysk8zer0/eslint-config": "^1.0.1",
     "@shgysk8zer0/polyfills": "^0.6.0",
-    "eslint": "^9.10.0",
+    "eslint": "^10.0.0",
     "http-server": "^14.1.1",
     "rollup": "^4.9.6"
   },
