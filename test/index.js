@@ -3,10 +3,11 @@ import { css } from '@aegisjsproject/core/parsers/css.js';
 import { getUniqueSelector } from '@aegisjsproject/core/dom.js';
 import { observeEvents } from '@aegisjsproject/core/events.js';
 import { createPolicy } from '@aegisjsproject/core/trust.js';
-import { reset } from '@aegisjsproject/styles/reset.js';
-import { properties } from '@aegisjsproject/styles/properties.js';
-import { btn, btnSuccess, btnDanger } from '@aegisjsproject/styles/button.js';
-import { baseTheme, lightTheme, darkTheme } from '@aegisjsproject/styles/theme.js';
+import reset from '@aegisjsproject/styles/css/reset.css' with { type: 'css' };
+import properties from '@aegisjsproject/styles/css/properties.css' with { type: 'css' };
+import layers from '@aegisjsproject/styles/css/layers.css' with { type: 'css' };
+import buttons from '@aegisjsproject/styles/css/button.css' with { type: 'css' };
+import { baseTheme} from '@aegisjsproject/styles/theme.js';
 import { init } from '@aegisjsproject/router/router.js';
 import { watchState } from '@aegisjsproject/state/state.js';
 import { pages } from './consts.js';
@@ -40,7 +41,7 @@ createPolicy('default', {
 const scope = getUniqueSelector();
 watchState();
 
-document.adoptedStyleSheets = [properties, reset, baseTheme, lightTheme, darkTheme, btn, btnSuccess, btnDanger, css`.${scope} {
+document.adoptedStyleSheets = [layers, properties, reset, baseTheme, buttons, css`.${scope} {
 	color: red;
 }`];
 
@@ -65,6 +66,13 @@ customElements.whenDefined('aegis-link').then(AegisLink => {
 	document.getElementById('nav').append(...pages.map(createLink));
 });
 
+document.documentElement.addEventListener('command', ({ command, source, currentTarget }) => {
+	switch(command) {
+		case '--theme':
+			currentTarget.dataset.theme = source.dataset.setTheme;
+			break;
+	}
+});
 
 document.body.prepend(
 	html`<header>

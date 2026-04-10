@@ -1,5 +1,6 @@
 import { reset } from '@aegisjsproject/styles/reset.js';
-import { componentBase, componentDarkTheme, componentLightTheme } from '@aegisjsproject/styles/theme.js';
+import { layers } from '@aegisjsproject/styles/layers.js';
+import { componentBase } from '@aegisjsproject/styles/theme.js';
 import { btn, btnPrimary, btnDanger, btnSuccess, btnWarning } from '@aegisjsproject/styles/button.js';
 import { html } from '@aegisjsproject/core/parsers/html.js';
 import { css } from '@aegisjsproject/core/parsers/css.js';
@@ -8,6 +9,10 @@ import { attachListeners } from '@aegisjsproject/core/events.js';
 import { registerComponent, getRegisteredComponentTags } from '@aegisjsproject/core/componentRegistry.js';
 import { SYMBOLS, TRIGGERS, EVENTS, STATES } from './consts.js';
 import { observeStateChanges, unobserveStateChanges } from '@aegisjsproject/state/state.js';
+
+const SHARED_STYLES = [
+	layers, reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase,
+];
 
 const observed = new WeakMap();
 
@@ -111,13 +116,13 @@ export class AegisComponent extends HTMLElement {
 				this.#internals.states.add(STATES.loading);
 
 				if (Array.isArray(styles)) {
-					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, ...styles];
+					this.#shadow.adoptedStyleSheets = [...SHARED_STYLES, ...styles];
 				} else if (styles instanceof CSSStyleSheet) {
-					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, styles];
+					this.#shadow.adoptedStyleSheets = [...SHARED_STYLES, styles];
 				} else if (typeof styles === 'string') {
-					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme, css`${styles}`];
+					this.#shadow.adoptedStyleSheets = [...SHARED_STYLES, css`${styles}`];
 				} else {
-					this.#shadow.adoptedStyleSheets = [reset, btn, btnPrimary, btnDanger, btnSuccess, btnWarning, componentBase, componentDarkTheme, componentLightTheme];
+					this.#shadow.adoptedStyleSheets = SHARED_STYLES;
 				}
 
 				if (template instanceof HTMLTemplateElement) {

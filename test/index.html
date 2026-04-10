@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" id="doc">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
@@ -32,11 +32,14 @@
 			}
 		</script>
 		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" src="/node_modules/@shgysk8zer0/polyfills/browser.min.js" fetchpriority="auto"></script>
-		<script type="application/javascript" defer="" referrerpolicy="no-referrer" crossorigin="anonymous" integrity="sha256-R0JDqpQmNTidjyYggk9uQRqu9ypLx95G8HLVWIed80Q=" src="https://unpkg.com/@shgysk8zer0/kazoo@1.0.7/harden.js" fetchpriority="auto"></script>
 		<script type="module" referrerpolicy="no-referrer" src="./index.js"></script>
 	</head>
 	<body>
-		<nav id="nav"></nav>
+		<nav id="nav">
+			<button type="button" class="btn btn-system" command="--theme" data-set-theme="auto" commandfor="doc">Auto</button>
+			<button type="button" class="btn btn-dark" command="--theme" data-set-theme="dark" commandfor="doc">Dark Mode</button>
+			<button type="button" class="btn btn-dark" command="--theme" data-set-theme="light" commandfor="doc">Light Mode</button>
+		</nav>
 		<main id="root">
 			<aegis-counter></aegis-counter>
 		</main>

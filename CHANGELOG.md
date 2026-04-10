@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update theming support via `@aegisjsproject/styles`
+
 ## [v0.1.7] - 2025-11-18
 
 ### Changed
