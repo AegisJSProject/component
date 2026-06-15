@@ -27,7 +27,7 @@ Base component using [`@aegisjsproject/core`](https://github.com/AegisJSProject/
 
 - [Code of Conduct](./.github/CODE_OF_CONDUCT.md)
 - [Contributing](./.github/CONTRIBUTING.md)
-<!-- - [Security Policy](./.github/SECURITY.md) -->
+- [Security Policy](./.github/SECURITY.md)
 
 ## Example Component
 
