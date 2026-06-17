@@ -100,7 +100,7 @@
     "rollup": "^4.62.0"
   },
   "dependencies": {
-    "@aegisjsproject/core": "^0.2.34",
+    "@aegisjsproject/core": "^0.3.0",
     "@aegisjsproject/styles": "^0.4.0"
   },
   "allowScripts": {
